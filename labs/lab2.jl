@@ -127,13 +127,14 @@ exp(2z^2 + 3im)
 
 ## TODO: What is the type of 1.2 + 2.3im?
 
-
+println(typeof(1.2 + 2.3im))
 
 # **Problem 1(b)** Add another implementation of `foo` that returns `im` if the input
 # is a `ComplexF64`.
 
 ## TODO: Overload foo for when the input is a ComplexF64 and return im
 
+foo(n::ComplexF64) = im
 
 @test foo(1.1 + 2im) == im
 
@@ -154,22 +155,30 @@ exp(2z^2 + 3im)
 function exp_t(z, n)
     ## TODO: Compute the first (n+1)-terms of the Taylor series of exp
     ## evaluated at z
-    
+    s_k = 1.0
+    ret = 0
+    for j in 1:n+1
+        ret += s_k
+        s_k = s_k * z / j
+    end
+    ret
 end
 
 @test exp_t(1.0, 10) isa Float64 # isa is used to test the type of a result
 @test exp_t(im, 10) isa ComplexF64 # isa is used to test the type of a result
 
 @test exp_t(1.0, 100) ≈ exp(1)
-
 # **Problem 2(b)** Plot the error for `n = 1:1000` of `exp_t(z, n)` for `z = 1, im, -5`, and `-100`,
 # scaling the y-axis logarithmically.
 # Does the method appear to converge for all values of $z$?
 
 ## TODO: plot the error for the Taylor series approximation.
 
-
-
+n_range = 1:1000
+plot(n_range, [abs(exp_t(1, n) - exp(1)) for n=n_range]; yscale=:log10, label="Taylor series error for z = 1")
+plot!(n_range, [abs(exp_t(im, n) - exp(im)) for n=n_range]; label="Taylor series error for z = im")
+plot!(n_range, [abs(exp_t(-5, n) - exp(-5)) for n=n_range]; label="Taylor series error for z = -5")
+plot!(n_range, [abs(exp_t(-100, n) - exp(-100)) for n=n_range]; label="Taylor series error for z = -100")
 # ------
 
 
